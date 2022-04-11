@@ -60,9 +60,6 @@ class CVATRegister
     vector<company> id_data;
     vector<unsigned int> invoices;
 
-    vector<company>::iterator data_ptr;
-    vector<int>::iterator invoices_ptr;
-
     int findCompany ( const string & name, const string & addr) const;
     int findCompany ( const string & taxID) const;
     int binSearch ( int l, int r, const string & name, const string & addr) const;
@@ -81,8 +78,6 @@ class CVATRegister
         return toLower( c1.addr ) < toLower( c2.addr );
       return toLower( c1.name ) < toLower( c2.name );
     }
-
-
 };
 
 CVATRegister::CVATRegister ( void )
