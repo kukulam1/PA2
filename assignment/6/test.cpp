@@ -27,10 +27,12 @@ using namespace std;
 class CDataType
 {
   public:
-    CDataType () {};
+    CDataType () {}
+    virtual ~CDataType ( void ) noexcept = default;
     virtual int  getSize()                         const = 0;
     virtual bool operator == ( const CDataType & ) const = 0;
     virtual bool operator != ( const CDataType & ) const = 0;
+    virtual CDataType * clone ()                   const = 0;
     virtual ostream & print ( ostream & os )       const = 0;
 };
 
@@ -42,39 +44,71 @@ ostream & operator << ( ostream & os, const CDataType & data )
 class CDataTypeInt : public CDataType
 {
   public:
-    CDataTypeInt() {};
+    CDataTypeInt() {}
     int  getSize()                              const override { return 4; }
-    bool operator == ( const CDataType & rhs )  const override { return dynamic_cast<const CDataTypeInt*>(&rhs) != nullptr; }
-    bool operator != ( const CDataType & rhs )  const override { return dynamic_cast<const CDataTypeInt*>(&rhs) == nullptr; }
-    ostream & print ( ostream & os )            const override { return os << "int " << endl; }
+    bool operator == ( const CDataType & rhs )  const override
+    { return dynamic_cast<const CDataTypeInt*>(&rhs) != nullptr; }
+    bool operator != ( const CDataType & rhs )  const override
+    { return dynamic_cast<const CDataTypeInt*>(&rhs) == nullptr; }
+    CDataTypeInt * clone ()                     const override 
+    { return new CDataTypeInt( *this ); }
+    ostream & print ( ostream & os )            const override
+    { return os << "int ";}
   private:
     int m_X;
 };
 class CDataTypeDouble : public CDataType
 {
   public:
-    CDataTypeDouble() {};
+    CDataTypeDouble() {}
     int  getSize()                             const override { return 8; }
-    bool operator == ( const CDataType & rhs ) const override { return dynamic_cast<const CDataTypeDouble*>(&rhs) != nullptr; }
-    bool operator != ( const CDataType & rhs ) const override { return dynamic_cast<const CDataTypeDouble*>(&rhs) == nullptr; }
-    ostream & print ( ostream & os )           const override { return os << "double" << endl; }
+    bool operator == ( const CDataType & rhs ) const override 
+    { return dynamic_cast<const CDataTypeDouble*>(&rhs) != nullptr; }
+    bool operator != ( const CDataType & rhs ) const override 
+    { return dynamic_cast<const CDataTypeDouble*>(&rhs) == nullptr; }
+    CDataTypeDouble * clone ()                 const override 
+    { return new CDataTypeDouble( *this ); }
+    ostream & print ( ostream & os )           const override
+    { return os << "double "; }
   private:
     double m_X;
 };
 class CDataTypeEnum : public CDataType
 {
   public:
-    CDataTypeEnum() {};
+    CDataTypeEnum() {}
+    CDataTypeEnum( const CDataTypeEnum & src )
+    {
+      if ( &src == this )
+        return;
+      for ( size_t i = 0; i < src.m_Enum.size(); ++i )
+        m_Enum.push_back( src.m_Enum.at( i ) );     
+    }
     int  getSize()                             const override { return 4; }
     CDataTypeEnum & add ( const string & s );
-    bool operator == ( const CDataType & rhs ) const override { return dynamic_cast<const CDataTypeEnum*>(&rhs) != nullptr; }
-    bool operator != ( const CDataType & rhs ) const override { return dynamic_cast<const CDataTypeEnum*>(&rhs) == nullptr; }
+    bool operator == ( const CDataType & rhs ) const override 
+    { 
+      const CDataTypeEnum * tmp = dynamic_cast<const CDataTypeEnum*>(&rhs);
+      if ( tmp == nullptr )
+        return false;
+      if ( tmp->m_Enum.size() != m_Enum.size() )
+        return false;
+      for ( size_t i = 0; i < m_Enum.size(); ++i )
+        if ( m_Enum.at( i ) != tmp->m_Enum.at( i ) )
+               return false;
+      return true;
+    }
+    bool operator != ( const CDataType & rhs ) const override 
+    { return !(*this == rhs); }
+    CDataTypeEnum * clone ()                   const override 
+    { return new CDataTypeEnum( *this ); }
     ostream & print ( ostream & os )           const override 
     {
-      os << "enum" << endl << '{' << endl;
-      for ( size_t i = 0; i < m_Enum.size(); ++i )
-        os << m_Enum[ i ] << endl;
-      return os << "} ";
+      os << "enum" << endl << "  " << '{' << endl;
+      for ( size_t i = 0; i < m_Enum.size() - 1; ++i )
+        os << "  " << m_Enum[ i ] << ',' << endl;
+      os << "  " << m_Enum[ m_Enum.size() - 1 ] <<  endl;
+      return os << "  } ";
     }
   private:
     vector<string> m_Enum;
@@ -82,36 +116,92 @@ class CDataTypeEnum : public CDataType
 class CDataTypeStruct : public CDataType
 {
   public:
-    CDataTypeStruct() {};
-    int  getSize()                             const override { return m_Struct.size(); }
-    CDataTypeStruct & addField ( const string & name, const CDataType & type );
+    CDataTypeStruct() {}
+    CDataTypeStruct( const CDataTypeStruct & src ) 
+    {
+      if ( &src == this )
+        return;
+      for ( size_t i = 0; i < src.m_Struct.size(); ++i )
+        m_Struct.push_back( src.m_Struct.at( i ) );     
+    }
+    CDataTypeStruct & operator = ( CDataTypeStruct src )
+    {
+      std::swap( m_Struct, src.m_Struct);
+      return *this;
+    } 
+    int  getSize()                             const override 
+    {
+      size_t res = 0;
+      for ( size_t i = 0; i < m_Struct.size(); ++i )
+        res += m_Struct.at( i ).data->getSize();
+      return res;       
+    }
+    CDataTypeStruct & addField ( const string & name,const CDataType & type );
     const CDataType & field ( const string & name ) const;
-    bool operator == ( const CDataType & rhs ) const override { return dynamic_cast<const CDataTypeStruct*>(&rhs) != nullptr; }
-    bool operator != ( const CDataType & rhs ) const override { return dynamic_cast<const CDataTypeStruct*>(&rhs) == nullptr; }
+    bool operator == ( const CDataType & rhs ) const override
+    {
+      const CDataTypeStruct * tmp = dynamic_cast<const CDataTypeStruct*>(&rhs);
+      if ( tmp == nullptr )
+        return false;
+      if ( tmp->m_Struct.size() != m_Struct.size() )
+        return false;
+      for ( size_t i = 0; i < m_Struct.size(); ++i )
+        if ( *(m_Struct.at( i ).data) != *(tmp->m_Struct.at( i ).data) )
+               return false;
+      return true;
+    }
+    bool operator != ( const CDataType & rhs ) const override 
+    { return !(*this == rhs); }
+    CDataTypeStruct * clone ()                   const override 
+    { return new CDataTypeStruct( *this ); }
     ostream & print ( ostream & os )           const override 
     {
       os << "struct" << endl << '{' << endl;
       for ( size_t i = 0; i < m_Struct.size(); ++i )
+      {
+        os << "  ";
         m_Struct[ i ].data->print( os );
-      return os << '}';
+        os << m_Struct[ i ].name <<  ';' << endl;
+      }
+      return os << '}' << endl;
     }
   private:
-    struct member {
+    class CValue {
+      public:
       string name;
       const CDataType * data;
-      member ( const string & nm, const CDataType & type )
-      :name ( nm ), data ( &type ) 
-      {}
-    };    
-    vector<member> m_Struct;
+      CValue ( const string & nm, const CDataType & type )
+      :name ( nm )
+      {
+        data = type.clone();
+      }
+      CValue ( const CValue & src )
+      {
+        if ( &src == this )
+          return;
+        name = src.name;
+        data = src.data->clone();                
+      }
+      CValue & operator = ( CValue src )
+      {
+        std::swap( name, src.name );
+        std::swap( data, src.data );
+        return *this;
+      }
+      ~CValue ()
+      {
+        delete data;
+      }
 
+    };    
+    vector<CValue> m_Struct;
 };
 
 CDataTypeEnum & CDataTypeEnum::add ( const string & s )
 { 
   for ( size_t i = 0; i < m_Enum.size(); ++i )
     if ( m_Enum[ i ] == s )
-      throw invalid_argument( "Element already in enum." ); 
+      throw invalid_argument( "Duplicate enum value: " + s ); 
   m_Enum.push_back( s );
   return *this;  
 }
@@ -120,8 +210,8 @@ CDataTypeStruct & CDataTypeStruct::addField ( const string & name, const CDataTy
 {
   for ( size_t i = 0; i < m_Struct.size(); ++i )
     if ( m_Struct[ i ].name == name )
-      throw invalid_argument( "Element already in struct." );
-  m_Struct.push_back( member{ name, type} );
+      throw invalid_argument( "Duplicate field: " + name );
+  m_Struct.push_back( CValue{ name, type } );
   return *this; 
 }
 const CDataType & CDataTypeStruct::field ( const string & name ) const
@@ -129,7 +219,7 @@ const CDataType & CDataTypeStruct::field ( const string & name ) const
   for ( size_t i = 0; i < m_Struct.size(); ++i )
     if ( m_Struct[ i ].name == name )
       return *m_Struct[ i ].data;  
-  throw invalid_argument( "Element not in struct." );
+  throw invalid_argument( "Unknown field: " + name );
 }
 
 
@@ -137,7 +227,6 @@ const CDataType & CDataTypeStruct::field ( const string & name ) const
 static bool        whitespaceMatch                         ( const string    & a,
                                                              const string    & b )
 {
-  // todo
   return true;
 }
 template <typename T_>
@@ -198,7 +287,12 @@ int main ( void )
     "  } m_Status;\n"
     "  double m_Ratio;\n"
     "}") );
-
+    /*
+    a.print( cout );
+    b.print( cout );
+    c.print( cout );
+    d.print( cout );
+    */
   assert ( whitespaceMatch ( b, "struct\n"
     "{\n"
     "  int m_Length;\n"
@@ -211,7 +305,6 @@ int main ( void )
     "  } m_Status;\n"
     "  double m_Ratio;\n"
     "}") );
-
   assert ( whitespaceMatch ( c, "struct\n"
     "{\n"
     "  int m_First;\n"
@@ -325,9 +418,10 @@ int main ( void )
     "  int m_Ratio;\n"
     "  double m_Another;\n"
     "}") );
-/*
+
   assert ( a . getSize () == 20 );
   assert ( b . getSize () == 24 );
+/*
   try
   {
     a . addField ( "m_Status", CDataTypeInt () );
@@ -335,7 +429,7 @@ int main ( void )
   }
   catch ( const invalid_argument & e )
   {
-    assert ( e . what () == "Duplicate field: m_Status"sv );
+    assert ( strcmp (e . what (), "Duplicate field: m_Status") );
   }
 
   try
@@ -345,7 +439,7 @@ int main ( void )
   }
   catch ( const invalid_argument & e )
   {
-    assert ( e . what () == "Unknown field: m_Fail"sv );
+    assert ( strcmp (e . what (),"Unknown field: m_Fail" ));
   }
 
   try
@@ -358,9 +452,9 @@ int main ( void )
   }
   catch ( const invalid_argument & e )
   {
-    assert ( e . what () == "Duplicate enum value: FIRST"sv );
+    assert ( strcmp (e . what (),"Duplicate enum value: FIRST" ));
   }
-/**/
+*/
   return EXIT_SUCCESS;
 }
 #endif /* __PROGTEST__ */
