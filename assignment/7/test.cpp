@@ -24,14 +24,51 @@
 using namespace std;
 #endif /* __PROGTEST__ */
 
-template <typename T_, typename C_>
+template <typename T_, typename C_ = std::less<typename T_::value_type>>
 class CIndex
 {
   public:
     // constructor
-    // search ()
+    CIndex ( T_ x )
+    : data ( x )
+    {}
+    CIndex ( T_ x, C_ c )
+    : data ( x ), cmp ( c )
+    {}
+    set<size_t> search ( const T_ & subseq ) const;
     // todo
+
+
+  private:
+    T_ data;
+    C_ cmp;
+
 };
+
+template <typename T_, typename C_>
+set<size_t> CIndex<T_,C_>::search ( const T_ & subseq ) const 
+{
+
+  set<size_t> res;
+  if ( subseq.empty() )
+  {
+    for ( size_t i = 0; i < data.size(); ++i )
+      res.insert( i );
+    return res;
+  }
+  for ( auto it1 = data.begin(); it1 != data.end(); ++it1 )
+  {
+    auto it = it1;
+    for ( auto it2 = subseq.begin(); it2 != subseq.end(); ++it2, ++it )
+    {
+      if ( cmp( (*it), (*it2)) || cmp( (*it2), (*it)) )
+        break;
+    }
+    if ( (size_t)std::distance( it1, it) == subseq.size() )
+      res.insert( (size_t)std::distance( data.begin(), it1 ) );
+  }
+  return res;
+}
   
 #ifndef __PROGTEST__  
 class CStrComparator
@@ -124,7 +161,6 @@ int main ( void )
   assert ( r25 == ( set<size_t> { 2 } ) );
   set<size_t> r26 = t7 . search ( list<string>{"test", "this"} );
   assert ( r26 == ( set<size_t> { 2, 5 } ) );
-
   return 0;
 }
 #endif /* __PROGTEST__ */
