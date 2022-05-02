@@ -5,13 +5,12 @@
 
 #pragma once
 
-#include "CMap.h"
+#include <cstddef>
 
-class CGame
+class CCoord
 {
     public:
-
+        size_t m_X;
+        size_t m_Y;
     private:
-
-
 };
