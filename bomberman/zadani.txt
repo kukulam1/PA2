@@ -1,28 +1,28 @@
 = Bomberman
 Autor: Matěj Kukula
 
-= Zadání
+== Zadání
 
 Klasická hra Bomberman
 
 Implementujte následující varianty:
 
-. pro alespoň 2 hráče na jednom počítači
-. pro hru proti počítači
+. pro alespoň 2 hráče na jednom počítači 
+. pro hru proti počítači 
 
 Hra musí splňovat následující funkcionality:
 
-. Načítání herních levelů (mapy) ze souboru (vytvořte vhodný formát)
-. Sbírání konfigurovatelných bonusů (zvětšení plamenu, více bomb, odpalování bomb na dálku,...)
-. Ukládání nejlepšího dosaženého skóre do souboru
+. Načítání herních levelů (mapy) ze souboru (vytvořte vhodný formát) 
+. Sbírání konfigurovatelných bonusů (zvětšení plamenu, více bomb, odpalování bomb na dálku,...) 
+. Ukládání nejlepšího dosaženého skóre do souboru 
 
 Kde lze využít polymorfismus? (doporučené)
 
-. Ovládání hráčů: lokální hráč, umělá inteligence (různé druhy), síťový hráč
-. Uživatelské rozhraní: konzolové, ncurses, SDL, OpenGL (různé druhy),...
-. Efekty bonusů a nemocí: zvětšení plamenu, zvýšení počtu bomb,...
+. Ovládání hráčů: lokální hráč, umělá inteligence (různé druhy), síťový hráč 
+. Uživatelské rozhraní: konzolové, ncurses, SDL, OpenGL (různé druhy),... 
+. Efekty bonusů a nemocí: zvětšení plamenu, zvýšení počtu bomb,... 
 
-= Specifikace
+== Specifikace
 
 Implementace klasické hry bomberman pro 2 hráče. Každý hráč má neomezený počet bomb a v každém iteraci ji může položit na prázdné políčko. Po chvíli bomba vybouchne a zabije hráče v dosahu. Vyhrává poslední hráč naživu.
 
@@ -56,9 +56,9 @@ Terminál se po každé iteraci vyčistí a mapa se znova vykreslí.
 `#` .. políčko, které jde odtranit výbuchem bomby
 `*` .. vylepšení bomby (power up)
 
-= polymorfismus
+== Polymorfismus
 
 Polymorfismus je uplatněný v následujících místech:
 
-. CPlayer, CPlayerHuman, CPlayerAI: kde třída CPlayer má polymorfní metodu `Move`, ta se při každé iteraci hry zavolá na všechny hráče 
+. CPlayer, CPlayerHuman, CPlayerAI: kde třída CPlayer má polymorfní metodu `Move`, ta se při každé iteraci hry zavolá na všechny hráče a podle konkr0tn9 implemetace vykoná pohyb
 . CPowerUp: kde třída bude mít polymorfní metodu `Boom` (různé efekty vybouchnutí bomby)
