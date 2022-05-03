@@ -10,6 +10,8 @@
 class CCoord
 {
     public:
+        CCoord() = default;
+        CCoord( size_t x, size_t y );
         size_t m_X;
         size_t m_Y;
     private:
