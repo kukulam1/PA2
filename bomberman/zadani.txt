@@ -27,8 +27,6 @@ Kde lze využít polymorfismus? (doporučené)
 Implementace klasické hry bomberman pro 2 hráče. Každý hráč má neomezený počet bomb a v každém iteraci ji může položit na prázdné políčko. Po chvíli bomba vybouchne a zabije hráče v dosahu. Vyhrává poslední hráč naživu.
 
 ```
-Zadejte pohyb:
-$ s
 +---------+
 |1  #    2|
 | X#X X X |
@@ -38,8 +36,8 @@ $ s
 | X X X X |
 |      *  |
 +---------+
-Zadejte pohyb:
-$
+Player1 : d
+Player2 : l
 +---------+
 |   #   2 |
 |1X#X X X |
