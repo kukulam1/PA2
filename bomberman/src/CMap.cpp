@@ -54,9 +54,9 @@ CMap & CMap::InsertPlayer ( char num, CCoord cord )
 }
 
 
-CMap & CMap::PlaceBomb ( const CCoord & c )
+CMap & CMap::PlaceBomb ( const char c, const CCoord & coord )
 {
-    m_Map[c.m_X][c.m_Y] = 'O';
+    m_Map[coord.m_X][coord.m_Y] = c;
     return *this;
 }
 
@@ -88,3 +88,12 @@ void CMap::PrintEdge () const
     cout << '+' << endl;
 }
 
+bool CMap::Explode ( const CCoord & c )
+{
+    bool killed = false;
+    if ( '1' <= m_Map[c.m_X][c.m_Y] && m_Map[c.m_X][c.m_Y] <=  '4' )
+        killed = true;
+    if ( m_Map[c.m_X][c.m_Y] != 'X' )
+        m_Map[c.m_X][c.m_Y] = ' ';
+    return killed;
+}

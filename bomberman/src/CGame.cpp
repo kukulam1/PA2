@@ -6,6 +6,7 @@
 #include "CGame.h"
 #include <memory>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -13,39 +14,34 @@ CGame::CGame ( CMap map )
 : m_Map ( map )
 {}
 
-CGame & CGame::AddPlayer ( unique_ptr<CPlayer> player )
-{
-    m_Players.push_back( move( player ) );
-    return *this;
-}
-
+/**
+ * @brief Game implementation.
+ */
 CGame & CGame::Run ()
 {
     Init();
     m_Map.Print();
-    while ( m_Alive > 1 )
+
+    while ( PlayersAlive() > 1 )
     {
         for ( auto & player : m_Players )
         {
             EMove move = player->GetMove( m_Map );
             MovePlayer( *player, move );
         }
-        for ( auto it = m_Bombs.begin(); it != m_Bombs.end(); ++it )
-        {
-            if ( --it->m_Time == 0 )
-                Boom( it->m_Coord );
-        }
+        BombTick();
         system( "clear" );
-        m_Map.Print();    
+        m_Map.Print();
     }
+
     PrintResult();
     return *this;
 }
 
 CGame & CGame::Init ()
 {
-    CPlayerHuman new_player(++m_Alive, m_Map.GetWidth());
-    CPlayerHuman new_player2(++m_Alive, m_Map.GetWidth());
+    CPlayerHuman new_player( ++m_Alive, m_Map.GetWidth() );
+    CPlayerHuman new_player2( ++m_Alive, m_Map.GetWidth() );
     m_Players.push_back( new_player.Clone() );
     m_Players.push_back( new_player2.Clone() );
 
@@ -54,8 +50,15 @@ CGame & CGame::Init ()
     return *this;
 }
 
+/**
+ * @brief Player move.
+ * @param player 
+ * @param move 
+ */
 CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
 {
+    if ( move != EMove::bomb )
+        player.m_Direction = move;
     if ( !ValidMove( player, move) )
         return *this;
     switch ( move )
@@ -63,28 +66,36 @@ CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
         case EMove::up:
         {
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
-            m_Map.m_Map[--player.m_Coord.m_X][player.m_Coord.m_Y] = player.GetNum();
+            if ( m_Map.m_Map[--player.m_Coord.m_X][player.m_Coord.m_Y]  == '*' )
+                player.GetPowerUp();
+            m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = player.GetNum();
             player.m_Direction = EMove::up;
             break;            
         }
         case EMove::down:
         {
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
-            m_Map.m_Map[++player.m_Coord.m_X][player.m_Coord.m_Y] = player.GetNum();
+            if ( m_Map.m_Map[++player.m_Coord.m_X][player.m_Coord.m_Y]  == '*' )
+                player.GetPowerUp();
+            m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = player.GetNum();
             player.m_Direction = EMove::down;
             break;  
         }
         case EMove::left:
         {
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
-            m_Map.m_Map[player.m_Coord.m_X][--player.m_Coord.m_Y] = player.GetNum();
+            if ( m_Map.m_Map[player.m_Coord.m_X][--player.m_Coord.m_Y]  == '*' )
+                player.GetPowerUp();
+            m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = player.GetNum();
             player.m_Direction = EMove::left;
             break; 
         }
         case EMove::right:
         {
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
-            m_Map.m_Map[player.m_Coord.m_X][++player.m_Coord.m_Y] = player.GetNum();
+            if ( m_Map.m_Map[player.m_Coord.m_X][++player.m_Coord.m_Y]  == '*' )
+                player.GetPowerUp();
+            m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = player.GetNum();
             player.m_Direction = EMove::right;
             break; 
         }
@@ -94,22 +105,22 @@ CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
             {
                 case EMove::up:
                 {
-                    PlaceBomb( CCoord( player.m_Coord.m_X - 1, player.m_Coord.m_Y ));
+                    PlaceBomb( player, CCoord( player.m_Coord.m_X - 1, player.m_Coord.m_Y ));
                     break;                    
                 }
                 case EMove::down:
                 {
-                    PlaceBomb( CCoord( player.m_Coord.m_X + 1, player.m_Coord.m_Y ));
+                    PlaceBomb( player, CCoord( player.m_Coord.m_X + 1, player.m_Coord.m_Y ));
                     break;                    
                 }
                 case EMove::left:
                 {
-                    PlaceBomb( CCoord( player.m_Coord.m_X, player.m_Coord.m_Y - 1 ));
+                    PlaceBomb( player, CCoord( player.m_Coord.m_X, player.m_Coord.m_Y - 1 ));
                     break;                    
                 }
                 case EMove::right:
                 {
-                    PlaceBomb( CCoord( player.m_Coord.m_X, player.m_Coord.m_Y + 1 ));
+                    PlaceBomb( player, CCoord( player.m_Coord.m_X, player.m_Coord.m_Y + 1 ));
                     break;                    
                 }
                 case EMove::bomb:
@@ -123,6 +134,11 @@ CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
     return *this;        
 }
 
+/**
+ * @brief Checks if move is valid.
+ * @param player 
+ * @param move 
+ */
 bool CGame::ValidMove ( const CPlayer & player, const EMove & move ) const
 {
     // Move out of map
@@ -168,47 +184,60 @@ bool CGame::ValidMove ( const CPlayer & player, const EMove & move ) const
     return true;
 }
 
-CGame & CGame::PlaceBomb ( const CCoord & c )
+CGame & CGame::PlaceBomb ( CPlayer & player, const CCoord & coord )
 {
-    m_Map.PlaceBomb( CCoord( c.m_X, c.m_Y ));
-    m_Bombs.push_back( CBomb( c ) );
+    player.m_Bomb->m_Coord = coord;
+    m_Map.PlaceBomb( player.m_Bomb->GetVisual(), coord );
+    m_Bombs.push_back( move( player.m_Bomb ) );
+    player.m_Bomb = make_shared<CBomb>();
     return *this;
 }
-
-CGame & CGame::Boom ( const CCoord & c )
-{
-    m_Map.m_Map[c.m_X][c.m_Y] = ' ';
-    for ( int i = (int)c.m_X - 1; i < (int)c.m_X + 2 ; ++i )
-        for ( int j = (int)c.m_Y - 1; j < (int)c.m_Y + 2; ++j )
-            if ( i >= 0 &&  j >= 0 && i < (int)m_Map.GetHeight() && j < (int)m_Map.GetWidth() )
-            {
-                if ( m_Map.m_Map[i][j] == 'X' || m_Map.m_Map[i][j] == ' ' )
-                    continue;
-                if ( m_Map.m_Map[i][j] == '#' || m_Map.m_Map[i][j] == '*' )
-                {
-                    m_Map.m_Map[i][j] = ' ';
-                    continue;
-                }
-                // Player died
-                for ( auto it = m_Players.begin(); it != m_Players.end(); ++it )
-                    if ( (*it)->GetNum() == m_Map.m_Map[i][j] )
-                    {
-                        m_Players.erase( it );
-                        break;
-                    }
-                --m_Alive;
-                m_Map.m_Map[i][j] = ' ';                
-            }
-    return *this;
-}
-
+/**
+ * @brief Print results of the game.
+ */
 void CGame::PrintResult() const
 {
-    if ( m_Players.empty() )
-    {
-        cout << "Draw!" << endl;
-        return;
-    }
-    cout << "Player " << m_Players.front()->GetNum() << " wins!" << endl;
+    for ( size_t i = 0; i < m_Map.GetHeight(); ++i )
+        for ( size_t j = 0; j < m_Map.GetWidth(); ++j )
+        {
+            if ( '1' <= m_Map.m_Map[i][j] && m_Map.m_Map[i][j] <= '4' )
+            {
+                cout << "Player " << m_Map.m_Map[i][j] << " wins!" << endl;
+                return;
+            }
+        }
+    cout << "Draw" << endl;
     return;
-} 
+}
+
+int CGame::PlayersAlive ( void ) const
+{
+    int alive = 0;
+    for ( size_t i = 0; i < m_Map.GetHeight(); ++i )
+        for ( size_t j = 0; j < m_Map.GetWidth(); ++j )
+            if ( m_Map.m_Map[i][j] == '1' || m_Map.m_Map[i][j] == '2' )
+                ++alive;
+    return alive;
+}
+
+
+/**
+ * @brief Bombs tick a those with no time left explode
+ * 
+ * @return CGame& 
+ */
+CGame & CGame::BombTick () 
+{
+    auto it = m_Bombs.begin();
+    while ( it != m_Bombs.end() )
+    {
+        if ( --((*it)->m_Time) == 0 )
+        {
+            (*it)->Effect( m_Map );
+            it = m_Bombs.erase( it );
+        }
+        else
+            ++it;
+    }
+    return *this;
+}

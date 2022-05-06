@@ -13,12 +13,11 @@ using namespace std;
 int main ( void )
 {
 
-    CMap mp ( "../maps/01.txt");
+    CMap mp ( "../maps/00.txt");
     mp.Build();
 
     CGame game ( mp );
     game.Run();
 
-    cout << "Hello world!" << endl;
     return 0;
 }

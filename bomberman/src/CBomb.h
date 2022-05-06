@@ -4,14 +4,28 @@
  */
 
 #pragma once
+#include <memory>
 #include "CCoord.h"
+#include "CMap.h"
 
-struct CBomb 
+/**
+ * @brief Class CBomb
+ * virtual method Effect -> differenct effects
+ */
+class CBomb 
 {
     public:
         size_t m_Time;
         CCoord m_Coord;
-        CBomb ( const CCoord & c )
-        : m_Time ( 3 ), m_Coord ( c )
-        {}
+
+        CBomb ();
+
+        CBomb ( const CCoord & c );
+
+        virtual std::unique_ptr<CBomb> Clone () const;
+
+        virtual CBomb & Effect ( CMap & map );
+
+        virtual const char GetVisual () const { return 'O'; }
+        
 };

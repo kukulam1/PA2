@@ -19,9 +19,11 @@ class CMap
 
         CMap & Build ();
 
-        CMap & InsertPlayer ( char num, CCoord cord );
+        CMap & InsertPlayer ( char num, CCoord coord );
 
-        CMap & PlaceBomb ( const CCoord & c );
+        CMap & PlaceBomb ( const char c, const CCoord & coord );
+
+        bool Explode ( const CCoord & c );
         
         void Print () const;
         

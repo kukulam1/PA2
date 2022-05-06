@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <memory>
+#include <iostream>
 #include "CPlayer.h"
 #include "EMove.h"
 #include "CMap.h"

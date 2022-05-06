@@ -7,11 +7,13 @@
 
 #include <cstddef>
 
-class CCoord
+struct CCoord
 {
     public:
         CCoord() = default;
-        CCoord( size_t x, size_t y );
+        CCoord ( size_t x, size_t y )
+        : m_X( x ), m_Y( y )
+        {}
         size_t m_X;
         size_t m_Y;
     private:

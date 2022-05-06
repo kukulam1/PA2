@@ -3,7 +3,6 @@
  * @date 2022-05-02
  */
 
-#include <iostream>
 #include "CPlayer.h"
 
 using namespace std;
@@ -15,7 +14,17 @@ CPlayer::CPlayer ( size_t num, size_t map_size )
         m_Coord = CCoord( 0, 0 );
     else
         m_Coord = CCoord( 0, map_size - 1 );
+    m_Bomb = make_shared<CBomb>();
 }
+
+CPlayer::CPlayer ( const CPlayer & c )
+:   m_Coord     ( c.m_Coord ),
+    m_Direction ( c.m_Direction ),
+    m_Bomb      ( std::move( c.m_Bomb )),
+    m_Score     ( c.m_Score ),
+    m_Num       ( c.m_Num ),
+    m_Alive     ( c.m_Alive )                
+{}
 
 CCoord CPlayer::GetCoord () const
 {
@@ -25,4 +34,23 @@ CCoord CPlayer::GetCoord () const
 char CPlayer::GetNum() const
 {
     return m_Num + '0';
+}
+
+/**
+ * @brief Get player a random power up.
+ * @return CPlayer& 
+ */
+CPlayer & CPlayer::GetPowerUp ()
+{
+    if ( rand() % 3 == 0 )
+    {
+        CFlameBomb db;
+        m_Bomb =  move( db.Clone() );
+    }
+    else
+    {
+        CDoubleBomb db;
+        m_Bomb =  move( db.Clone() );
+    }
+    return *this;
 }

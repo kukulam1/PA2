@@ -3,9 +3,6 @@
  * @date 2022-05-02
  */
 
-#include <cstddef>
-#include <iostream>
-#include <memory>
 #include "CPlayerHuman.h"
 
 using namespace std;

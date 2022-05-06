@@ -10,18 +10,26 @@
 #include "EMove.h"
 #include "CMap.h"
 #include "CCoord.h"
+#include "CBomb.h"
+#include "CDoubleBomb.h"
+#include "CFlameBomb.h"
 
+/**
+ * @brief Abstract class player
+ * Virtual method GetMove -> input from player or AI move  
+ */
 class CPlayer
 {
     public:
         CCoord m_Coord;
         EMove  m_Direction;
+        std::shared_ptr<CBomb> m_Bomb;
 
         CPlayer () = default;
 
         CPlayer ( size_t num, size_t map_size );
 
-        CPlayer ( const CPlayer & ) = default;
+        CPlayer ( const CPlayer & c );
 
         CPlayer & operator= ( const CPlayer & ) = delete;
 
@@ -30,6 +38,8 @@ class CPlayer
         virtual std::unique_ptr<CPlayer> Clone () const = 0;
 
         virtual EMove GetMove ( const CMap & map ) = 0;
+
+        CPlayer & GetPowerUp ();
         
         CCoord GetCoord () const;
 
