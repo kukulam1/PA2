@@ -7,15 +7,19 @@
 
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <algorithm>
+#include <fstream>
 #include "CMap.h"
 #include "CPlayer.h"
 #include "CPlayerHuman.h"
+#include "CPlayerAI.h"
 #include "CBomb.h"
 
 class CGame
 {
     public:
-        explicit CGame ( CMap map );
+        CGame ( CMap map, char game_type );
 
         CGame & Run ();
 
@@ -37,7 +41,11 @@ class CGame
 
         int PlayersAlive ( void ) const;
 
+        void CheckHighScore ( int player_num ) const;
+
         void PrintResult () const;
 
+        void PrintMenu () const;
 
+        void PrintHelp () const;
 };

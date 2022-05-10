@@ -14,14 +14,10 @@
 class CPlayerHuman : public CPlayer
 {
     public:
-
         CPlayerHuman ( size_t num, size_t map_size );
 
         std::unique_ptr<CPlayer> Clone () const override;
 
         EMove GetMove ( const CMap & map ) override;
-
-
     private:
-
 };

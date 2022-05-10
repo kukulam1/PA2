@@ -20,5 +20,4 @@ class CFlameBomb : public CBomb
         CFlameBomb & Effect ( CMap & map ) override;
 
         const char GetVisual () const override { return 'F'; }
-        
 };

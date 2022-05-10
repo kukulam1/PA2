@@ -2,3 +2,7 @@
 *.tgz
 *.out
 *.Identifier
+*/.vscode/*
+*/bin/*
+*/score/
+*/build/

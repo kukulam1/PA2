@@ -4,15 +4,28 @@
  */
 
 #include "CGame.h"
-#include <memory>
-#include <iostream>
-#include <algorithm>
 
 using namespace std;
 
-CGame::CGame ( CMap map ) 
+CGame::CGame ( CMap map, char game_type ) 
 : m_Map ( map )
-{}
+{
+    CPlayerHuman new_player( ++m_Alive, m_Map.GetWidth() );
+    m_Players.push_back( new_player.Clone() );
+    if ( game_type == '1' )
+    {
+        CPlayerHuman new_player2( ++m_Alive, m_Map.GetWidth() );
+        m_Players.push_back( new_player2.Clone() );
+        return;
+    }    
+    if ( game_type == '2' )
+    {
+        CPlayerAI new_player2( ++m_Alive, m_Map.GetWidth() );
+        m_Players.push_back( new_player2.Clone() );
+        return;
+    }
+    throw "Wrong menu_choice in CGame constructor.";
+}
 
 /**
  * @brief Game implementation.
@@ -28,10 +41,12 @@ CGame & CGame::Run ()
         {
             EMove move = player->GetMove( m_Map );
             MovePlayer( *player, move );
+            player->m_Score++;
         }
         BombTick();
         system( "clear" );
         m_Map.Print();
+
     }
 
     PrintResult();
@@ -40,11 +55,6 @@ CGame & CGame::Run ()
 
 CGame & CGame::Init ()
 {
-    CPlayerHuman new_player( ++m_Alive, m_Map.GetWidth() );
-    CPlayerHuman new_player2( ++m_Alive, m_Map.GetWidth() );
-    m_Players.push_back( new_player.Clone() );
-    m_Players.push_back( new_player2.Clone() );
-
     for ( auto & player : m_Players )
         m_Map.InsertPlayer( player->GetNum(), player->GetCoord() );
     return *this;
@@ -57,14 +67,17 @@ CGame & CGame::Init ()
  */
 CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
 {
-    if ( move != EMove::bomb )
-        player.m_Direction = move;
     if ( !ValidMove( player, move) )
         return *this;
     switch ( move )
     {
         case EMove::up:
         {
+            if ( player.m_Direction != EMove::up )
+            {
+                player.m_Direction = EMove::up;
+                break;                
+            }
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
             if ( m_Map.m_Map[--player.m_Coord.m_X][player.m_Coord.m_Y]  == '*' )
                 player.GetPowerUp();
@@ -74,6 +87,11 @@ CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
         }
         case EMove::down:
         {
+            if ( player.m_Direction != EMove::down )
+            {
+                player.m_Direction = EMove::down;
+                break;                
+            }
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
             if ( m_Map.m_Map[++player.m_Coord.m_X][player.m_Coord.m_Y]  == '*' )
                 player.GetPowerUp();
@@ -83,6 +101,11 @@ CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
         }
         case EMove::left:
         {
+            if ( player.m_Direction != EMove::left )
+            {
+                player.m_Direction = EMove::left;
+                break;                
+            }
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
             if ( m_Map.m_Map[player.m_Coord.m_X][--player.m_Coord.m_Y]  == '*' )
                 player.GetPowerUp();
@@ -92,6 +115,11 @@ CGame & CGame::MovePlayer   ( CPlayer & player, const EMove & move )
         }
         case EMove::right:
         {
+            if ( player.m_Direction != EMove::right )
+            {
+                player.m_Direction = EMove::right;
+                break;                
+            }
             m_Map.m_Map[player.m_Coord.m_X][player.m_Coord.m_Y] = ' ';
             if ( m_Map.m_Map[player.m_Coord.m_X][++player.m_Coord.m_Y]  == '*' )
                 player.GetPowerUp();
@@ -203,11 +231,29 @@ void CGame::PrintResult() const
             if ( '1' <= m_Map.m_Map[i][j] && m_Map.m_Map[i][j] <= '4' )
             {
                 cout << "Player " << m_Map.m_Map[i][j] << " wins!" << endl;
+                //int -> char: Players from 1, not from 0 -> - '1' 
+                CheckHighScore( m_Map.m_Map[i][j] - '1' );
                 return;
             }
         }
     cout << "Draw" << endl;
     return;
+}
+
+void CGame::CheckHighScore( int player_num ) const
+{
+    ifstream in_file( "score/high_score.txt" );
+    size_t high_score;
+    in_file >> high_score;
+    in_file.close();
+    
+    if ( m_Players[ player_num ]->m_Score > high_score )
+    {
+        ofstream out_file( "score/high_score.txt" );
+        out_file << m_Players[ player_num ]->m_Score << endl;
+        out_file.close();
+        cout << "New high score " << m_Players[ player_num ]->m_Score << '!' << endl;
+    }            
 }
 
 int CGame::PlayersAlive ( void ) const

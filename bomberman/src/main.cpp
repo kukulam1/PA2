@@ -6,6 +6,7 @@
 #include <iostream>
 #include "CMap.h"
 #include "CGame.h"
+#include "CInterface.h"
 
 using namespace std;
 
@@ -13,11 +14,35 @@ using namespace std;
 int main ( void )
 {
 
-    CMap mp ( "../maps/00.txt");
-    mp.Build();
+    CInterface interface;
+    try 
+    {
+        interface.PrintMenu();
+    }
+    catch ( const invalid_argument & e )
+    {
+        cout << e.what() << endl;
+        return -1;
+    }
 
-    CGame game ( mp );
+    string map_name = string("maps/0") + interface.map_choice + string(".txt");
+
+    CMap map ( map_name );
+
+    try
+    {
+        map.Build();
+    }
+    catch( const std::exception & e )
+    {
+        std::cerr << e.what() << endl;
+        return -1;
+    }
+
+    CGame game ( map, interface.menu_choice );
     game.Run();
 
     return 0;
 }
+
+

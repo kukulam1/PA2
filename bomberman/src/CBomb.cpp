@@ -8,11 +8,11 @@
 using namespace std;
 
 CBomb::CBomb ()
-: m_Time ( 3 )
+: m_Time ( 4 )
 {}
 
 CBomb::CBomb ( const CCoord & c )
-: m_Time ( 3 ), m_Coord ( c )
+: m_Time ( 4 ), m_Coord ( c )
 {}
 
 unique_ptr<CBomb> CBomb::Clone () const

@@ -24,6 +24,8 @@ class CMap
         CMap & PlaceBomb ( const char c, const CCoord & coord );
 
         bool Explode ( const CCoord & c );
+
+        bool WillExplodeClose ( const CCoord & c ) const;
         
         void Print () const;
         

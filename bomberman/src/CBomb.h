@@ -27,5 +27,5 @@ class CBomb
         virtual CBomb & Effect ( CMap & map );
 
         virtual const char GetVisual () const { return 'O'; }
-        
+    private:        
 };

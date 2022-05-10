@@ -21,29 +21,23 @@ CMap::CMap ( std::string filename )
  */
 CMap & CMap::Build ()
 {
-    try 
+    ifstream map_file;
+    map_file.open( m_Filename );
+    if ( !map_file.is_open() )
+        throw ifstream::failure("Error with opening map file.\nWrong folder.\n");
+    map_file >> m_Width;
+    map_file >> m_Height;
+    m_Map = std::vector<std::vector<char>>(m_Height, std::vector<char>(m_Width, ' '));
+    string buffer;
+    size_t line_num = 0;
+    getline( map_file, buffer);
+    while ( getline( map_file, buffer) )
     {
-        ifstream map_file;
-        map_file.open( m_Filename );
-        map_file >> m_Width;
-        map_file >> m_Height;
-        m_Map = std::vector<std::vector<char>>(m_Height, std::vector<char>(m_Width, ' '));
-        string buffer;
-        size_t line_num = 0;
-        getline( map_file, buffer);
-        while ( getline( map_file, buffer) )
-        {
-            for ( size_t i = 0; i < buffer.size() - 1; ++i )
-                m_Map[line_num][i] = buffer[i];
-            ++line_num;
-        }
-        map_file.close();
+        for ( size_t i = 0; i < buffer.size() - 1; ++i )
+            m_Map[line_num][i] = buffer[i];
+        ++line_num;
     }
-    catch ( exception const & e )
-    {
-        cout << "Error with map loading!" << endl;
-        throw e;
-    }
+    map_file.close();
     return *this;
 }
 
@@ -96,4 +90,34 @@ bool CMap::Explode ( const CCoord & c )
     if ( m_Map[c.m_X][c.m_Y] != 'X' )
         m_Map[c.m_X][c.m_Y] = ' ';
     return killed;
+}
+
+// Only places right next to
+bool CMap::WillExplodeClose ( const CCoord & c ) const
+{
+    //up
+    if ( (int)c.m_X - 1 >= 0 )
+    {
+        if ( m_Map[c.m_X - 1][c.m_Y] == 'O' || m_Map[c.m_X - 1][c.m_Y] == 'A' )
+            return true;
+    }
+    //down
+    if ( c.m_X + 1 < m_Height )
+    {
+        if ( m_Map[c.m_X + 1][c.m_Y] == 'O' || m_Map[c.m_X + 1][c.m_Y] == 'A' )
+            return true;
+    }
+    //up
+    if ( (int)c.m_Y - 1 >= 0 )
+    {
+        if ( m_Map[c.m_X][c.m_Y - 1] == 'O' || m_Map[c.m_X][c.m_Y - 1] == 'A' )
+            return true;
+    }
+    //down
+    if ( c.m_Y + 1 < m_Width )
+    {
+        if ( m_Map[c.m_X][c.m_Y + 1] == 'O' || m_Map[c.m_X][c.m_Y + 1] == 'A' )
+            return true;
+    }
+    return false;
 }
