@@ -21,7 +21,7 @@ int main ( void )
     }
     catch ( const invalid_argument & e )
     {
-        cout << e.what() << endl;
+        std::cerr << e.what() << endl;
         return -1;
     }
 

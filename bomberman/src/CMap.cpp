@@ -24,7 +24,7 @@ CMap & CMap::Build ()
     ifstream map_file;
     map_file.open( m_Filename );
     if ( !map_file.is_open() )
-        throw ifstream::failure("Error with opening map file.\nWrong folder.\n");
+        throw ifstream::failure("Error with opening map file.\nMake sure you are in right folder.\n");
     map_file >> m_Width;
     map_file >> m_Height;
     m_Map = std::vector<std::vector<char>>(m_Height, std::vector<char>(m_Width, ' '));

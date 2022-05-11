@@ -59,4 +59,4 @@ Terminál se po každé iteraci vyčistí a mapa se znova vykreslí.
 Polymorfismus je uplatněný v následujících místech:
 
 . CPlayer, CPlayerHuman, CPlayerAI: kde třída CPlayer má polymorfní metodu `Move`, ta se při každé iteraci hry zavolá na všechny hráče a podle konkrétní implemetace vykoná pohyb
-. CBomb, CDoubleBomb, CFlameBomb: kde třída bude mít polymorfní metodu `Effect` (různé efekty vybouchnutí bomby) a `GetVisual` (různé vykreslení bomby)
+. CBomb, CDoubleBomb, CAllDirectionBomb, CFlameBomb: kde třída bude mít polymorfní metodu `Effect` (různé efekty vybouchnutí bomby) a `GetVisual` (různé vykreslení bomby)

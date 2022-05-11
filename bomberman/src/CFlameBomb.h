@@ -8,6 +8,9 @@
 #include <memory>
 #include "CBomb.h"
 
+/**
+ * @brief Bomb that burn all spots vertical and horizontal until it hits 'X'
+ */
 class CFlameBomb : public CBomb
 {
     public:

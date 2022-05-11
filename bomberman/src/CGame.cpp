@@ -7,6 +7,12 @@
 
 using namespace std;
 
+/**
+ * @brief Construct a new CGame::CGame object
+ * Add players to game  
+ * @param map 
+ * @param game_type '1' -> 2 player game, 2 -> against AI
+ */
 CGame::CGame ( CMap map, char game_type ) 
 : m_Map ( map )
 {
@@ -46,13 +52,16 @@ CGame & CGame::Run ()
         BombTick();
         system( "clear" );
         m_Map.Print();
-
     }
 
     PrintResult();
     return *this;
 }
 
+/**
+ * @brief Initialize game, add players to map
+ * @return CGame& 
+ */
 CGame & CGame::Init ()
 {
     for ( auto & player : m_Players )
@@ -239,15 +248,19 @@ void CGame::PrintResult() const
     cout << "Draw" << endl;
     return;
 }
-
+/**
+ * @brief Check if new high score by human player
+ * @param player_num 
+ */
 void CGame::CheckHighScore( int player_num ) const
 {
     ifstream in_file( "score/high_score.txt" );
     size_t high_score;
     in_file >> high_score;
     in_file.close();
-    
-    if ( m_Players[ player_num ]->m_Score > high_score )
+    //check if player with high score is human player
+    if ( m_Players[ player_num ]->m_Score > high_score && 
+         dynamic_pointer_cast<CPlayerHuman>(m_Players[ player_num ]) != nullptr )
     {
         ofstream out_file( "score/high_score.txt" );
         out_file << m_Players[ player_num ]->m_Score << endl;

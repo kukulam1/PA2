@@ -16,6 +16,9 @@
 #include "CPlayerAI.h"
 #include "CBomb.h"
 
+/**
+ * @brief class CGame implements most of the game 
+ */
 class CGame
 {
     public:

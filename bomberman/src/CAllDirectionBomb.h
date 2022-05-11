@@ -8,6 +8,9 @@
 #include <memory>
 #include "CBomb.h"
 
+/**
+ * @brief Bomb that burn all spots near 
+ */
 class CAllDirectionBomb : public CBomb
 {
     public:

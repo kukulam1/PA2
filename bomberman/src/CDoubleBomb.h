@@ -8,6 +8,9 @@
 #include <memory>
 #include "CBomb.h"
 
+/**
+ * @brief Bomb that burn all spots with distance 2
+ */
 class CDoubleBomb : public CBomb
 {
     public:

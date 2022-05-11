@@ -17,6 +17,13 @@ std::unique_ptr<CPlayer> CPlayerAI::Clone () const
     return make_unique<CPlayerAI>( *this );
 }
 
+/**
+ * @brief implements dummz AI move:
+ * 1) if bomb is close -> run from it
+ * 2) otherwise make random move 
+ * @param map 
+ * @return EMove 
+ */
 EMove CPlayerAI::GetMove ( const CMap & map ) 
 {
     if ( map.WillExplodeClose( m_Coord ) )

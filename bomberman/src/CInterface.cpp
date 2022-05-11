@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 void CInterface::PrintMenu()
 {
     system( "clear" );

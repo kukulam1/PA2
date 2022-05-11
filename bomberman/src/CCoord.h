@@ -7,6 +7,9 @@
 
 #include <cstddef>
 
+/**
+ * @brief Coordination in map
+ */
 struct CCoord
 {
     public:

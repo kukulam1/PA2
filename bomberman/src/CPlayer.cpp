@@ -7,8 +7,14 @@
 
 using namespace std;
 
+/**
+ * @brief Construct a new CPlayer::CPlayer object
+ * place first player top left, second top right
+ * @param num 
+ * @param map_size 
+ */
 CPlayer::CPlayer ( size_t num, size_t map_size )
-: m_Direction ( EMove::down ), m_Score ( 0 ), m_Num ( num ), m_Alive ( true )
+: m_Direction ( EMove::down ), m_Score ( 0 ), m_Num ( num )
 {
     if ( num == 1 )
         m_Coord = CCoord( 0, 0 );
@@ -22,8 +28,7 @@ CPlayer::CPlayer ( const CPlayer & c )
     m_Direction ( c.m_Direction ),
     m_Score     ( c.m_Score ),
     m_Bomb      ( std::move( c.m_Bomb )),
-    m_Num       ( c.m_Num ),
-    m_Alive     ( c.m_Alive )                
+    m_Num       ( c.m_Num )             
 {}
 
 CCoord CPlayer::GetCoord () const
@@ -42,9 +47,6 @@ char CPlayer::GetNum() const
  */
 CPlayer & CPlayer::GetPowerUp ()
 {
-        CAllDirectionBomb db;
-        m_Bomb =  move( db.Clone() );        
-    return *this;
     int rnd = rand() % 3;
     if ( rnd == 0 )
     {

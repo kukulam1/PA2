@@ -10,6 +10,10 @@
 #include <string>
 #include "CCoord.h"
 #include "EMove.h"
+
+/**
+ * @brief class CMap implements map
+ */
 class CMap 
 {
     public:

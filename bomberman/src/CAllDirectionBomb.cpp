@@ -20,7 +20,6 @@ unique_ptr<CBomb> CAllDirectionBomb::Clone () const
     return make_unique<CAllDirectionBomb>( *this );
 }
 
-//TODO
 CAllDirectionBomb & CAllDirectionBomb::Effect ( CMap & map )
 {
     //up

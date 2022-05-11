@@ -5,6 +5,9 @@
 
 #include <iostream>
 
+/**
+ * @brief class CInterface implements interactive start menu
+ */
 class CInterface
 {
     public:

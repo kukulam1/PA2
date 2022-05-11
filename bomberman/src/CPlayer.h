@@ -49,5 +49,4 @@ class CPlayer
 
     protected:
         size_t m_Num;
-        bool   m_Alive;
 };
