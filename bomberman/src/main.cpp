@@ -25,7 +25,7 @@ int main ( void )
         return -1;
     }
 
-    string map_name = string("maps/0") + interface.map_choice + string(".txt");
+    string map_name = string("examples/maps/0") + interface.map_choice + string(".txt");
 
     CMap map ( map_name );
 
