@@ -14,22 +14,13 @@ using namespace std;
  * @param map_size 
  */
 CPlayer::CPlayer ( size_t num, size_t map_size )
-: m_Direction ( EMove::down ), m_Score ( 0 ), m_Num ( num )
+: m_Direction ( EMove::down ), m_Score ( 0 ), m_Bomb (), m_Num ( num )
 {
     if ( num == 1 )
         m_Coord = CCoord( 0, 0 );
     else
         m_Coord = CCoord( 0, map_size - 1 );
-    m_Bomb = make_shared<CBomb>();
 }
-
-CPlayer::CPlayer ( const CPlayer & c )
-:   m_Coord     ( c.m_Coord ),
-    m_Direction ( c.m_Direction ),
-    m_Score     ( c.m_Score ),
-    m_Bomb      ( std::move( c.m_Bomb )),
-    m_Num       ( c.m_Num )             
-{}
 
 CCoord CPlayer::GetCoord () const
 {
@@ -47,21 +38,6 @@ char CPlayer::GetNum() const
  */
 CPlayer & CPlayer::GetPowerUp ()
 {
-    int rnd = rand() % 3;
-    if ( rnd == 0 )
-    {
-        CFlameBomb db;
-        m_Bomb =  move( db.Clone() );
-    }
-    else if ( rnd == 1 )
-    {
-        CDoubleBomb db;
-        m_Bomb =  move( db.Clone() );
-    }
-    else if ( rnd == 2 )
-    {
-        CAllDirectionBomb db;
-        m_Bomb =  move( db.Clone() );        
-    }
+    m_Bomb.AddEffect();
     return *this;
 }

@@ -5,8 +5,10 @@
 
 #pragma once
 #include <memory>
+#include <vector>
 #include "CCoord.h"
 #include "CMap.h"
+#include "CEffect.h"
 
 /**
  * @brief Class CBomb
@@ -15,17 +17,15 @@
 class CBomb 
 {
     public:
-        size_t m_Time;
         CCoord m_Coord;
+        size_t m_Time;
 
         CBomb ();
 
-        CBomb ( const CCoord & c );
+        CBomb & AddEffect ();
 
-        virtual std::unique_ptr<CBomb> Clone () const;
+        CBomb & Boom ( CMap & map );
 
-        virtual CBomb & Effect ( CMap & map );
-
-        virtual const char GetVisual () const { return 'O'; }
-    private:        
+    private:
+        std::vector<std::shared_ptr<CEffect>> m_Effects;
 };

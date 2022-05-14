@@ -223,10 +223,10 @@ bool CGame::ValidMove ( const CPlayer & player, const EMove & move ) const
 
 CGame & CGame::PlaceBomb ( CPlayer & player, const CCoord & coord )
 {
-    player.m_Bomb->m_Coord = coord;
-    m_Map.PlaceBomb( player.m_Bomb->GetVisual(), coord );
-    m_Bombs.push_back( move( player.m_Bomb ) );
-    player.m_Bomb = make_shared<CBomb>();
+    player.m_Bomb.m_Coord = coord;
+    m_Map.PlaceBomb( 'O', coord );
+    m_Bombs.push_back( player.m_Bomb );
+    player.m_Bomb = move( CBomb() );
     return *this;
 }
 /**
@@ -290,9 +290,9 @@ CGame & CGame::BombTick ()
     auto it = m_Bombs.begin();
     while ( it != m_Bombs.end() )
     {
-        if ( --((*it)->m_Time) == 0 )
+        if ( --(it -> m_Time) == 0 )
         {
-            (*it)->Effect( m_Map );
+            it -> Boom( m_Map );
             it = m_Bombs.erase( it );
         }
         else

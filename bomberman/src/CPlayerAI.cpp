@@ -12,7 +12,7 @@ CPlayerAI::CPlayerAI ( size_t num, size_t map_size )
 {
 }
 
-std::unique_ptr<CPlayer> CPlayerAI::Clone () const 
+unique_ptr<CPlayer> CPlayerAI::Clone () const 
 {
     return make_unique<CPlayerAI>( *this );
 }

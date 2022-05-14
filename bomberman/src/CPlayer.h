@@ -11,9 +11,6 @@
 #include "CMap.h"
 #include "CCoord.h"
 #include "CBomb.h"
-#include "CDoubleBomb.h"
-#include "CFlameBomb.h"
-#include "CAllDirectionBomb.h"
 
 /**
  * @brief Abstract class player
@@ -25,13 +22,13 @@ class CPlayer
         CCoord m_Coord;
         EMove  m_Direction;
         size_t m_Score;
-        std::shared_ptr<CBomb> m_Bomb;
+        CBomb m_Bomb;
 
         CPlayer () = default;
 
         CPlayer ( size_t num, size_t map_size );
 
-        CPlayer ( const CPlayer & c );
+        CPlayer ( const CPlayer & c ) = default;
 
         CPlayer & operator= ( const CPlayer & ) = delete;
 

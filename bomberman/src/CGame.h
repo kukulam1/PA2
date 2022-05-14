@@ -29,7 +29,7 @@ class CGame
     private:
         CMap m_Map;
         std::vector<std::shared_ptr<CPlayer>> m_Players;
-        std::vector<std::shared_ptr<CBomb>> m_Bombs;
+        std::vector<CBomb> m_Bombs;
         size_t m_Alive = 0;
 
         CGame & Init ();
