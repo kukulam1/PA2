@@ -39,14 +39,14 @@ CDoubleBomb & CDoubleBomb::Effect ( CMap & map )
     //left
     for ( int i = m_Coord.m_Y - 1; i >= (int)m_Coord.m_Y - 2 && i >= 0; --i )
     {
-        if ( 'A' <= map.m_Map[i][m_Coord.m_Y] && map.m_Map[i][m_Coord.m_Y] <= 'Z' )
+        if ( 'A' <= map.m_Map[m_Coord.m_X][i] && map.m_Map[m_Coord.m_X][i] <= 'Z' )
             break;
         map.Explode( CCoord( m_Coord.m_X, i ));
     }
     //right
     for ( int i = m_Coord.m_Y + 1; i <= (int)m_Coord.m_Y + 2 && i < (int)map.GetWidth(); ++i )
     {
-        if ( 'A' <= map.m_Map[i][m_Coord.m_Y] && map.m_Map[i][m_Coord.m_Y] <= 'Z' )
+        if ( 'A' <= map.m_Map[m_Coord.m_X][i] && map.m_Map[m_Coord.m_X][i] <= 'Z' )
             break;
         map.Explode( CCoord( m_Coord.m_X, i ));
     }

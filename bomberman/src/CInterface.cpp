@@ -25,7 +25,7 @@ void CInterface::PrintMenu()
         case( '0' ):
         {
             PrintHelp();
-            break;
+            cin >> menu_choice;
         }
         case( '1' ):
         {
