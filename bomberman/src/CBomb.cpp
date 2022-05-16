@@ -54,6 +54,6 @@ CBomb & CBomb::AddEffect ( void )
 CBomb & CBomb::Boom ( CMap & map )
 {
     for ( auto effect: m_Effects )
-        effect->Effect(  m_Coord, map, m_Time );
+        effect->Effect( m_Coord, map );
     return *this;
 }

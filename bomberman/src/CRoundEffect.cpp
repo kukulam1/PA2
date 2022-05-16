@@ -12,7 +12,7 @@ std::unique_ptr<CEffect> CRoundEffect::Clone ( void ) const
     return make_unique<CRoundEffect>( *this );
 }
 
-void CRoundEffect::Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const
+void CRoundEffect::Effect ( const CCoord & coord, CMap & map ) const
 {
     //up
     if ( coord.m_X != 0 )

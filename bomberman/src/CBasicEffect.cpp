@@ -12,7 +12,7 @@ std::unique_ptr<CEffect> CBasicEffect::Clone ( void ) const
     return make_unique<CBasicEffect>( *this );
 }
 
-void CBasicEffect::Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const
+void CBasicEffect::Effect ( const CCoord & coord, CMap & map ) const
 {
     //up
     if ( coord.m_X != 0 )

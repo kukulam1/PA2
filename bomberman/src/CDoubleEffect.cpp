@@ -12,7 +12,7 @@ std::unique_ptr<CEffect> CDoubleEffect::Clone ( void ) const
     return make_unique<CDoubleEffect>( *this );
 }
 
-void CDoubleEffect::Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const
+void CDoubleEffect::Effect ( const CCoord & coord, CMap & map ) const
 {
     //up
     for ( int i = coord.m_X - 1; i >= (int)coord.m_X - 2 && i >= 0; --i )

@@ -12,7 +12,7 @@ std::unique_ptr<CEffect> CFlameEffect::Clone ( void ) const
     return make_unique<CFlameEffect>( *this );
 }
 
-void CFlameEffect::Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const
+void CFlameEffect::Effect ( const CCoord & coord, CMap & map ) const
 {
     //up
     for ( int i = coord.m_X - 1; i >= 0; --i )

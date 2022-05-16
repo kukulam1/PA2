@@ -16,7 +16,7 @@ class CEffect
         
         virtual std::unique_ptr<CEffect> Clone ( void ) const = 0;
 
-        virtual void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time ) const = 0;
+        virtual void Effect ( const CCoord & coord, CMap & map ) const = 0;
 };
 
 class CBasicEffect : public CEffect
@@ -25,7 +25,7 @@ class CBasicEffect : public CEffect
         
         std::unique_ptr<CEffect> Clone ( void ) const override;
 
-        void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const override;
+        void Effect ( const CCoord & coord, CMap & map ) const override;
 
 };
 
@@ -35,7 +35,7 @@ class CDoubleEffect : public CEffect
         
         std::unique_ptr<CEffect> Clone ( void ) const override;
 
-        void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const override;
+        void Effect ( const CCoord & coord, CMap & map ) const override;
 };
 
 class CFlameEffect : public CEffect
@@ -44,7 +44,7 @@ class CFlameEffect : public CEffect
         
         std::unique_ptr<CEffect> Clone ( void ) const override;
 
-        void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const override;
+        void Effect ( const CCoord & coord, CMap & map ) const override;
 };
 
 class CRoundEffect : public CEffect
@@ -53,23 +53,5 @@ class CRoundEffect : public CEffect
         
         std::unique_ptr<CEffect> Clone ( void ) const override;
 
-        void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const override;
-};
-
-class CShortEffect : public CEffect
-{
-    public:
-        
-        std::unique_ptr<CEffect> Clone ( void ) const override;
-
-        void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const override;
-};
-
-class CLongEffect : public CEffect
-{
-    public:
-        
-        std::unique_ptr<CEffect> Clone ( void ) const override;
-
-        void Effect ( const CCoord & coord, CMap & map, size_t & bomb_time  ) const override;
+        void Effect ( const CCoord & coord, CMap & map ) const override;
 };
