@@ -33,7 +33,7 @@ CMap & CMap::Build ()
     getline( map_file, buffer);
     while ( getline( map_file, buffer) )
     {
-        for ( size_t i = 0; i < buffer.size() - 1; ++i )
+        for ( size_t i = 0; i < m_Width; ++i )
             m_Map[line_num][i] = buffer[i];
         ++line_num;
     }
@@ -54,9 +54,28 @@ CMap & CMap::PlaceBomb ( const char c, const CCoord & coord )
     return *this;
 }
 
+CCoord CMap::FindPlayer( const char player_num ) const
+{
+    for ( size_t i = 0; i < m_Height; ++i )
+        for ( size_t j = 0; j < m_Width; ++j )
+            if ( m_Map[i][j] == player_num )
+                return CCoord( i, j);
+    return CCoord( 0, 0);
+}
+
 bool CMap::IsFree ( const CCoord & c ) const
 {
     return ( m_Map[c.m_X][c.m_Y] == ' ' || m_Map[c.m_X][c.m_Y] == '*' );
+}
+
+bool CMap::StopsFire ( const CCoord & c ) const
+{
+    return ( m_Map[c.m_X][c.m_Y] == 'X' || m_Map[c.m_X][c.m_Y] == 'O' || m_Map[c.m_X][c.m_Y] == '#' );
+}
+
+bool CMap::IsPlayer ( const CCoord & c ) const
+{
+    return '1' <= m_Map[c.m_X][c.m_Y] && m_Map[c.m_X][c.m_Y] <=  '4';
 }
 
 void CMap::Print () const 
@@ -85,7 +104,7 @@ void CMap::PrintEdge () const
 bool CMap::Explode ( const CCoord & c )
 {
     bool killed = false;
-    if ( '1' <= m_Map[c.m_X][c.m_Y] && m_Map[c.m_X][c.m_Y] <=  '4' )
+    if ( IsPlayer( c ) )
         killed = true;
     if ( m_Map[c.m_X][c.m_Y] != 'X' )
         m_Map[c.m_X][c.m_Y] = ' ';

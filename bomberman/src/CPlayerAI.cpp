@@ -27,39 +27,163 @@ unique_ptr<CPlayer> CPlayerAI::Clone () const
 EMove CPlayerAI::GetMove ( const CMap & map ) 
 {
     if ( map.WillExplodeClose( m_Coord ) )
-    {
         return RunFromBomb( map );
-    }
-    return RandomMove();
+    if ( CanPlaceClose( map ) )
+        return EMove::bomb;
+    return ChaseOpponent( map );
 }
 
 EMove CPlayerAI::RunFromBomb ( const CMap & map ) 
 {
-    //up
+    //bomb up
     if ( (int)m_Coord.m_X - 1 >= 0 )
     {
-        if ( map.m_Map[m_Coord.m_X - 1][m_Coord.m_Y] == 'O' || map.m_Map[m_Coord.m_X - 1][m_Coord.m_Y] == 'A' )
-            return EMove::down;
+        if ( map.m_Map[m_Coord.m_X - 1][m_Coord.m_Y] == 'O' )
+        {
+        //run down
+            if ( m_Coord.m_X + 1 < map.GetHeight() && map.IsFree( CCoord( m_Coord.m_X + 1, m_Coord.m_Y)) )
+                return EMove::down;
+            else if ( m_Coord.m_Y + 1 < map.GetWidth() && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y + 1)) )
+                return EMove::right;
+            else
+                return EMove::left;
+        }
     }
-    //down
+    //bomb down
     if ( m_Coord.m_X + 1 < map.GetHeight() )
     {
-        if ( map.m_Map[m_Coord.m_X + 1][m_Coord.m_Y] == 'O' || map.m_Map[m_Coord.m_X + 1][m_Coord.m_Y] == 'A' )
-            return EMove::up;
+        if ( map.m_Map[m_Coord.m_X + 1][m_Coord.m_Y] == 'O' )
+        {
+        //run up
+            if ( (int)m_Coord.m_X - 1 > 0 && map.IsFree( CCoord( m_Coord.m_X - 1, m_Coord.m_Y)) )
+                return EMove::up;
+            else if ( m_Coord.m_Y + 1 < map.GetWidth() && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y + 1)) )
+                return EMove::right;
+            else
+                return EMove::left;
+        }
     }
-    //left
+    //bomb left
     if ( (int)m_Coord.m_Y - 1 >= 0 )
     {
-        if ( map.m_Map[m_Coord.m_X][m_Coord.m_Y - 1] == 'O' || map.m_Map[m_Coord.m_X][m_Coord.m_Y - 1] == 'A' )
-            return EMove::right;
+        if ( map.m_Map[m_Coord.m_X][m_Coord.m_Y - 1] == 'O')
+        {
+        // run right
+            if ( m_Coord.m_Y + 1 < map.GetWidth() && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y + 1)) )
+                return EMove::right;
+        //run down
+            else if ( m_Coord.m_X + 1 < map.GetHeight() && map.IsFree( CCoord( m_Coord.m_X + 1, m_Coord.m_Y)) )
+                return EMove::down;
+            else
+                return EMove::up;
+        }
     }
-    //right
+    //bomb right
     if ( m_Coord.m_Y + 1 < map.GetWidth() )
     {
-        if ( map.m_Map[m_Coord.m_X][m_Coord.m_Y + 1] == 'O' || map.m_Map[m_Coord.m_X][m_Coord.m_Y + 1] == 'A' )
-            return EMove::left;
+        if ( map.m_Map[m_Coord.m_X][m_Coord.m_Y + 1] == 'O' )
+        {
+        // run right
+            if ( (int)m_Coord.m_Y - 1 > 0 && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y - 1)) )
+                return EMove::left;
+        //run down
+            else if ( m_Coord.m_X + 1 < map.GetHeight() && map.IsFree( CCoord( m_Coord.m_X + 1, m_Coord.m_Y)) )
+                return EMove::down;
+            else
+                return EMove::up;
+        }
     }
     throw "Bomb Close foun in map not with player";
+    return RandomMove();
+}
+
+bool CPlayerAI::CanPlaceClose( const CMap & map ) const
+{
+    if ( m_Direction == EMove::down )
+    {
+        if ( m_Coord.m_X + 2 < map.GetHeight() )
+        // opponent under bomb after placement
+            if ( map.IsPlayer( CCoord( m_Coord.m_X + 2, m_Coord.m_Y )) )
+                return true;
+        if ( m_Coord.m_X + 1 < map.GetHeight() )
+        {
+        // opponent left from bomb after placement
+            if ( (int)m_Coord.m_Y - 1 >= 0 && map.IsPlayer( CCoord( m_Coord.m_X + 1, m_Coord.m_Y - 1 )) )
+                return true;
+        // opponent right from bomb after placement
+            if ( m_Coord.m_Y + 1 < map.GetWidth() && map.IsPlayer( CCoord( m_Coord.m_X + 1, m_Coord.m_Y + 1 )) )
+                return true;
+        }
+    }
+    if ( m_Direction == EMove::up )
+    {
+        if ( (int)m_Coord.m_X - 2 >= 0 )
+        // opponent up from bomb after placement
+            if ( map.IsPlayer( CCoord( m_Coord.m_X - 2, m_Coord.m_Y )) )
+                return true;
+        if ( (int)m_Coord.m_X - 1 >= 0 )
+        {
+        // opponent left from bomb after placement
+            if ( (int)m_Coord.m_Y - 1 >= 0 && map.IsPlayer( CCoord( m_Coord.m_X - 1, m_Coord.m_Y - 1 )) )
+                return true;
+        // opponent right from bomb after placement
+            if ( m_Coord.m_Y + 1 < map.GetWidth() && map.IsPlayer( CCoord( m_Coord.m_X - 1, m_Coord.m_Y + 1 )) )
+                return true;
+        }
+    }
+    if ( m_Direction == EMove::right )
+    {
+        if ( m_Coord.m_Y + 2 < map.GetWidth() )
+        // opponent right from bomb after placement
+            if ( map.IsPlayer( CCoord( m_Coord.m_X, m_Coord.m_Y + 2 )) )
+                return true;
+        if ( m_Coord.m_Y + 1 < map.GetWidth())
+        {
+        // opponent up from bomb after placement
+            if ( (int)m_Coord.m_X - 1 >= 0 && map.IsPlayer( CCoord( m_Coord.m_X - 1, m_Coord.m_Y + 1 )) )
+                return true;
+        // opponent dwon from bomb after placement
+            if ( m_Coord.m_X + 1 < map.GetHeight() && map.IsPlayer( CCoord( m_Coord.m_X + 1, m_Coord.m_Y + 1 )) )
+                return true;
+        }
+    }
+    if ( m_Direction == EMove::left )
+    {
+        if ( m_Coord.m_Y - 2 >= 0 )
+        // opponent right from bomb after placement
+            if ( map.IsPlayer( CCoord( m_Coord.m_X, m_Coord.m_Y - 2 )) )
+                return true;
+        if ( m_Coord.m_Y - 1 >= 0 )
+        {
+        // opponent up from bomb after placement
+            if ( (int)m_Coord.m_X - 1 >= 0 && map.IsPlayer( CCoord( m_Coord.m_X - 1, m_Coord.m_Y - 1 )) )
+                return true;
+        // opponent dwon from bomb after placement
+            if ( m_Coord.m_X + 1 < map.GetHeight() && map.IsPlayer( CCoord( m_Coord.m_X + 1, m_Coord.m_Y - 1 )) )
+                return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Chase oppponent
+ * @param map 
+ * @return EMove in direction of opponent, if not possible return random move
+ */
+EMove CPlayerAI::ChaseOpponent ( const CMap & map )
+{
+    CCoord enemy_coord = map.FindPlayer( '1' );
+
+    if ( enemy_coord.m_X < m_Coord.m_X && map.IsFree( CCoord( m_Coord.m_X - 1, m_Coord.m_Y)) )
+        return EMove::up;
+    if ( enemy_coord.m_X > m_Coord.m_X && map.IsFree( CCoord( m_Coord.m_X + 1, m_Coord.m_Y)) )
+        return EMove::down;
+    if ( enemy_coord.m_Y < m_Coord.m_Y && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y - 1)) )
+        return EMove::left;
+    if ( enemy_coord.m_Y > m_Coord.m_Y && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y + 1)) )
+        return EMove::right;
+
     return RandomMove();
 }
 

@@ -27,6 +27,8 @@ class CMap
 
         CMap & PlaceBomb ( const char c, const CCoord & coord );
 
+        CCoord FindPlayer ( const char player_num ) const;
+
         bool Explode ( const CCoord & c );
 
         bool WillExplodeClose ( const CCoord & c ) const;
@@ -34,6 +36,8 @@ class CMap
         void Print () const;
         
         bool IsFree ( const CCoord & c ) const;
+
+        bool IsPlayer ( const CCoord & c ) const;
 
         size_t GetWidth () const  { return m_Width; }
 

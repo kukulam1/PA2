@@ -26,6 +26,7 @@ int main ( void )
     }
 
     string map_name = string("examples/maps/0") + interface.map_choice + string(".txt");
+    cout << map_name;
 
     CMap map ( map_name );
 

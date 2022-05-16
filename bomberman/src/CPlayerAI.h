@@ -32,5 +32,5 @@ class CPlayerAI : public CPlayer
         
         bool BoxClose ( const CMap & map ) const;
 
-        bool SomePowerUp ( const CMap & map ) const;
+        bool CanPlaceClose ( const CMap & map ) const;
 };
