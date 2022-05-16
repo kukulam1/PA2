@@ -68,11 +68,6 @@ bool CMap::IsFree ( const CCoord & c ) const
     return ( m_Map[c.m_X][c.m_Y] == ' ' || m_Map[c.m_X][c.m_Y] == '*' );
 }
 
-bool CMap::StopsFire ( const CCoord & c ) const
-{
-    return ( m_Map[c.m_X][c.m_Y] == 'X' || m_Map[c.m_X][c.m_Y] == 'O' || m_Map[c.m_X][c.m_Y] == '#' );
-}
-
 bool CMap::IsPlayer ( const CCoord & c ) const
 {
     return '1' <= m_Map[c.m_X][c.m_Y] && m_Map[c.m_X][c.m_Y] <=  '4';
@@ -117,25 +112,25 @@ bool CMap::WillExplodeClose ( const CCoord & c ) const
     //up
     if ( (int)c.m_X - 1 >= 0 )
     {
-        if ( m_Map[c.m_X - 1][c.m_Y] == 'O' || m_Map[c.m_X - 1][c.m_Y] == 'A' )
+        if ( m_Map[c.m_X - 1][c.m_Y] == 'O')
             return true;
     }
     //down
     if ( c.m_X + 1 < m_Height )
     {
-        if ( m_Map[c.m_X + 1][c.m_Y] == 'O' || m_Map[c.m_X + 1][c.m_Y] == 'A' )
+        if ( m_Map[c.m_X + 1][c.m_Y] == 'O')
             return true;
     }
     //up
     if ( (int)c.m_Y - 1 >= 0 )
     {
-        if ( m_Map[c.m_X][c.m_Y - 1] == 'O' || m_Map[c.m_X][c.m_Y - 1] == 'A' )
+        if ( m_Map[c.m_X][c.m_Y - 1] == 'O')
             return true;
     }
     //down
     if ( c.m_Y + 1 < m_Width )
     {
-        if ( m_Map[c.m_X][c.m_Y + 1] == 'O' || m_Map[c.m_X][c.m_Y + 1] == 'A' )
+        if ( m_Map[c.m_X][c.m_Y + 1] == 'O' )
             return true;
     }
     return false;

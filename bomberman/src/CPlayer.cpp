@@ -14,7 +14,7 @@ using namespace std;
  * @param map_size 
  */
 CPlayer::CPlayer ( size_t num, size_t map_size )
-: m_Direction ( EMove::left ), m_Score ( 0 ), m_Bomb (), m_Num ( num )
+: m_Direction ( EMove::down ), m_Score ( 0 ), m_Bomb (), m_Num ( num )
 {
     if ( num == 1 )
         m_Coord = CCoord( 0, 0 );

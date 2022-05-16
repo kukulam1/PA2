@@ -175,13 +175,21 @@ EMove CPlayerAI::ChaseOpponent ( const CMap & map )
 {
     CCoord enemy_coord = map.FindPlayer( '1' );
 
-    if ( enemy_coord.m_X < m_Coord.m_X && map.IsFree( CCoord( m_Coord.m_X - 1, m_Coord.m_Y)) )
+    if ( enemy_coord.m_X < m_Coord.m_X 
+        && map.IsFree( CCoord( m_Coord.m_X - 1, m_Coord.m_Y))
+        && !map.WillExplodeClose( CCoord( m_Coord.m_X - 1, m_Coord.m_Y)) ) 
         return EMove::up;
-    if ( enemy_coord.m_X > m_Coord.m_X && map.IsFree( CCoord( m_Coord.m_X + 1, m_Coord.m_Y)) )
+    if ( enemy_coord.m_X > m_Coord.m_X 
+        && map.IsFree( CCoord( m_Coord.m_X + 1, m_Coord.m_Y))
+        && !map.WillExplodeClose( CCoord( m_Coord.m_X + 1, m_Coord.m_Y)) ) 
         return EMove::down;
-    if ( enemy_coord.m_Y < m_Coord.m_Y && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y - 1)) )
+    if ( enemy_coord.m_Y < m_Coord.m_Y 
+        && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y - 1))
+        && !map.WillExplodeClose( CCoord( m_Coord.m_X, m_Coord.m_Y - 1)) ) 
         return EMove::left;
-    if ( enemy_coord.m_Y > m_Coord.m_Y && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y + 1)) )
+    if ( enemy_coord.m_Y > m_Coord.m_Y 
+        && map.IsFree( CCoord( m_Coord.m_X, m_Coord.m_Y + 1))
+        && !map.WillExplodeClose( CCoord( m_Coord.m_X, m_Coord.m_Y + 1)) ) 
         return EMove::right;
 
     return RandomMove();
