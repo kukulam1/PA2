@@ -121,13 +121,13 @@ bool CMap::WillExplodeClose ( const CCoord & c ) const
         if ( m_Map[c.m_X + 1][c.m_Y] == 'O')
             return true;
     }
-    //up
+    //left
     if ( (int)c.m_Y - 1 >= 0 )
     {
         if ( m_Map[c.m_X][c.m_Y - 1] == 'O')
             return true;
     }
-    //down
+    //right
     if ( c.m_Y + 1 < m_Width )
     {
         if ( m_Map[c.m_X][c.m_Y + 1] == 'O' )

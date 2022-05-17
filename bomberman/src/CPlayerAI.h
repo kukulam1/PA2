@@ -25,12 +25,6 @@ class CPlayerAI : public CPlayer
         EMove RandomMove () const;
 
         EMove ChaseOpponent ( const CMap & map );
-        
-        bool BombClose ( const CMap & map ) const;
-        
-        bool OppClose ( const CMap & map ) const;
-        
-        bool BoxClose ( const CMap & map ) const;
 
-        bool CanPlaceClose ( const CMap & map ) const;
+        bool CanPlaceClose( const CMap & map ) const;
 };

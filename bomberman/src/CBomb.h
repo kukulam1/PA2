@@ -12,7 +12,6 @@
 
 /**
  * @brief Class CBomb
- * virtual method Effect -> differenct effects
  */
 class CBomb 
 {

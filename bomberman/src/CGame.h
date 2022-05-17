@@ -47,8 +47,4 @@ class CGame
         void CheckHighScore ( int player_num ) const;
 
         void PrintResult () const;
-
-        void PrintMenu () const;
-
-        void PrintHelp () const;
 };

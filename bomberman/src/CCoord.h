@@ -19,5 +19,4 @@ struct CCoord
         {}
         size_t m_X;
         size_t m_Y;
-    private:
 };

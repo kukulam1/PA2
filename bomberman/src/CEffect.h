@@ -8,15 +8,16 @@
 #include <memory>
 #include "CMap.h"
 
-//TODO
-//bomb_time unused
+/**
+ * @brief Abstract class CEffect
+ */
 class CEffect
 {
     public:
         
         virtual std::unique_ptr<CEffect> Clone ( void ) const = 0;
 
-        virtual void Effect ( const CCoord & coord, CMap & map ) const = 0;
+        virtual void Effect ( const CCoord & coord, CMap & map) const = 0;
 };
 
 class CBasicEffect : public CEffect
@@ -25,7 +26,7 @@ class CBasicEffect : public CEffect
         
         std::unique_ptr<CEffect> Clone ( void ) const override;
 
-        void Effect ( const CCoord & coord, CMap & map ) const override;
+        void Effect ( const CCoord & coord, CMap & map) const override;
 
 };
 
