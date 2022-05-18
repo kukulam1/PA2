@@ -52,11 +52,12 @@ Player2 : l
 ....
 
 Terminál se po každé iteraci vyčistí a mapa se znova vykreslí.
- 
-. `1` ..hráči 
+
+. `1` .. hráči 
 . `X` .. políčko, které je nastálo (ani bombou nejde ostranit) 
 . `#` .. políčko, které jde odstranit výbuchem bomby 
 . `*` .. vylepšení bomby
+. `O` .. bomba
 
 == Polymorfismus
 
